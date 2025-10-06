@@ -1,0 +1,53 @@
+<script>
+  async function loadProvinces() {
+    try {
+      const res = await fetch('/api/provinces');
+      const data = await res.json();
+      console.log('✅ provinces loaded:', data); // ตรวจสอบใน console
+      return data;
+    } catch (err) {
+      console.error('❌ โหลดข้อมูลไม่สำเร็จ:', err);
+      return [];
+    }
+  }
+
+  function renderList(list) {
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+    if (list.length === 0) {
+      container.innerHTML = '<p class="text-gray-600">ไม่พบผลลัพธ์</p>';
+      return;
+    }
+
+    list.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'bg-white p-4 rounded-xl shadow mb-3 border border-gray-200';
+      card.innerHTML = `
+        <h2 class="text-xl font-semibold mb-1 text-blue-700">${p.name}</h2>
+        <p class="text-sm text-gray-500 mb-2">ภูมิภาค: ${p.region || '-'}</p>
+        <p class="text-gray-800 mb-2">${p.history}</p>
+        ${p.motto ? `<p class="italic text-green-700 mb-2">🪶 คำขวัญ: "${p.motto}"</p>` : ''}
+        ${p.attractions && p.attractions.length ?
+          `<p class="text-gray-700"><strong>สถานที่ท่องเที่ยว:</strong> ${p.attractions.join(', ')}</p>` : ''}
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  (async () => {
+    const provinces = await loadProvinces();
+    const search = document.getElementById('search');
+    renderList(provinces);
+
+    search.addEventListener('input', () => {
+      const q = search.value.trim();
+      try {
+        const regex = new RegExp(q, 'i');
+        const filtered = provinces.filter(p => regex.test(p.name));
+        renderList(filtered);
+      } catch {
+        renderList([]);
+      }
+    });
+  })();
+</script>
