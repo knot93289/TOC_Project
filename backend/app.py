@@ -15,13 +15,6 @@ def get_provinces():
     
     return Response(json.dumps(provinces, ensure_ascii=False), mimetype='application/json')
 
-# Serve the frontend index.html
-#@app.route('/<path:path>')
-#def serve_frontend(path):
- #   if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-  #      return send_from_directory(app.static_folder, path)
-   # else:
-    #    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/')
 def index():
@@ -29,6 +22,3 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
